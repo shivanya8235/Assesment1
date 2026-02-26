@@ -1,16 +1,15 @@
-import React from 'react'
-import Navbar from '../components/Navbar'
-import FlowBuilder from '../components/FlowBuilder'
+import React from "react";
+import Navbar from "../components/Navbar";
+import FlowBuilder from "../components/FlowBuilder";
 
 function HomePage() {
   return (
     <div>
-      <Navbar/>
       <div>
-        <FlowBuilder/>
+        <FlowBuilder />
       </div>
     </div>
-  )
+  );
 }
 
-export default HomePage
+export default HomePage;

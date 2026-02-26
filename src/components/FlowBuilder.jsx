@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from "react";
 import {
   ReactFlow,
   Controls,
@@ -7,14 +7,14 @@ import {
   useNodesState,
   useEdgesState,
   BackgroundVariant,
-} from '@xyflow/react';
-import '@xyflow/react/dist/style.css'; // Ensure the styles are imported!
- 
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css"; // Ensure the styles are imported!
 
-import TextNode from './TextNode';
+import TextNode from "./TextNode";
 
-import SettingsPanel from './SettingPanel';
-import NodesPanel from './NodePanel';
+import SettingsPanel from "./SettingPanel";
+import NodesPanel from "./NodePanel";
+import Navbar from "./Navbar";
 
 /**
  * Custom node types registry - maps node type strings to React components.
@@ -42,17 +42,19 @@ const FlowBuilder = () => {
     (params) => {
       // Enforce: Source handle can only have ONE outgoing edge
       const sourceHasEdge = edges.some(
-        (edge) => edge.source === params.source && edge.sourceHandle === params.sourceHandle
+        (edge) =>
+          edge.source === params.source &&
+          edge.sourceHandle === params.sourceHandle,
       );
 
       if (sourceHasEdge) {
-        toast.error('Source handle can only have one outgoing edge');
+        toast.error("Source handle can only have one outgoing edge");
         return;
       }
 
       setEdges((eds) => addEdge({ ...params, animated: true }, eds));
     },
-    [edges, setEdges]
+    [edges, setEdges],
   );
 
   /**
@@ -74,7 +76,7 @@ const FlowBuilder = () => {
    */
   const onDragOver = useCallback((event) => {
     event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
+    event.dataTransfer.dropEffect = "move";
   }, []);
 
   /**
@@ -84,7 +86,7 @@ const FlowBuilder = () => {
     (event) => {
       event.preventDefault();
 
-      const type = event.dataTransfer.getData('application/reactflow');
+      const type = event.dataTransfer.getData("application/reactflow");
       if (!type || !reactFlowInstance || !reactFlowWrapper.current) return;
 
       const bounds = reactFlowWrapper.current.getBoundingClientRect();
@@ -102,7 +104,7 @@ const FlowBuilder = () => {
 
       setNodes((nds) => nds.concat(newNode));
     },
-    [reactFlowInstance, setNodes]
+    [reactFlowInstance, setNodes],
   );
 
   /**
@@ -112,15 +114,19 @@ const FlowBuilder = () => {
     (id, text) => {
       setNodes((nds) =>
         nds.map((node) =>
-          node.id === id ? { ...node, data: { ...node.data, label: text } } : node
-        )
+          node.id === id
+            ? { ...node, data: { ...node.data, label: text } }
+            : node,
+        ),
       );
       // Update selectedNode state so the sidebar stays in sync
       setSelectedNode((prev) =>
-        prev && prev.id === id ? { ...prev, data: { ...prev.data, label: text } } : prev
+        prev && prev.id === id
+          ? { ...prev, data: { ...prev.data, label: text } }
+          : prev,
       );
     },
-    [setNodes]
+    [setNodes],
   );
 
   /**
@@ -131,31 +137,21 @@ const FlowBuilder = () => {
 
     // Condition: More than one node and more than one node has no target edges
     const nodesWithTargetEdges = new Set(edges.map((edge) => edge.target));
-    const nodesWithEmptyTargets = nodes.filter((node) => !nodesWithTargetEdges.has(node.id));
+    const nodesWithEmptyTargets = nodes.filter(
+      (node) => !nodesWithTargetEdges.has(node.id),
+    );
 
     if (nodes.length > 1 && nodesWithEmptyTargets.length > 1) {
-      toast.error('Cannot save: More than one node has an empty target handle');
+      toast.error("Cannot save: More than one node has an empty target handle");
     } else {
-      toast.success('Flow saved successfully!');
+      toast.success("Flow saved successfully!");
     }
   }, [nodes, edges]);
 
   return (
     <div className="flex flex-col h-screen w-full bg-gray-50">
       {/* Navbar Section */}
-      <header className="flex items-center justify-between px-8 py-3 bg-gray-100 border-b border-gray-300 shadow-sm">
-        <div className="flex-1">
-          <span className="text-xl font-bold text-blue-600">BiteSpeed</span>
-        </div>
-        <div className="flex-1 text-right">
-          <button
-            onClick={onSave}
-            className="px-6 py-2 font-semibold text-blue-600 bg-white border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-all active:scale-95"
-          >
-            Save Changes
-          </button>
-        </div>
-      </header>
+      <Navbar onSave={onSave} />
 
       {/* Main Builder Area */}
       <div className="flex flex-1 overflow-hidden">
@@ -175,7 +171,12 @@ const FlowBuilder = () => {
             fitView
           >
             <Controls />
-            <Background variant={BackgroundVariant.Dots} gap={20} size={1} color="#cbd5e1" />
+            <Background
+              variant={BackgroundVariant.Dots}
+              gap={20}
+              size={1}
+              color="#cbd5e1"
+            />
           </ReactFlow>
         </div>
 
